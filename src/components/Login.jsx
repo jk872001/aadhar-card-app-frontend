@@ -48,7 +48,9 @@ const navigate=useNavigate()
   return (
     <>
     <ToastContainer/>
-    <form onSubmit={handleLogin} className="max-w-sm mx-auto mt-5">
+    
+    <form onSubmit={handleLogin} className="max-w-sm mx-auto mt-5 p-10 border-2 border-blue-900 rounded-lg">
+    <p className="text-center text-2xl text-bold mb-3 ">Login</p>
       <div className="mb-5">
         <label
           htmlFor="email"

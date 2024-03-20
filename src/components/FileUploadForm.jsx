@@ -30,7 +30,7 @@ const FileUploadForm = () => {
       formData.append("uploadedBy", uploadedBy);
 
       let {data} = await axios.post(
-        "http://localhost:4003/api/v1/aadhar/uploadAadharCard",
+        "https://aadhar-card-app-backend.onrender.com/api/v1/aadhar/uploadAadharCard",
         formData,
         {
           headers: {

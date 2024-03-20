@@ -2,8 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { getLocalStorage } from "../utils/localStorage";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css'; 
 import SearchBar from "./SearchBar";
 import { formatDate } from "../utils/date";
 
@@ -37,7 +35,7 @@ const Home = () => {
 
   const fetchAadharCardList = async () => {
     let { data } = await axios.get(
-      `http://localhost:4003/api/v1/aadhar/getAllAadharCard/${userId}`
+      `https://aadhar-card-app-backend.onrender.com/api/v1/aadhar/getAllAadharCard/${userId}`
     );
     let response = data?.data?.aadharCards;
 
@@ -45,30 +43,14 @@ const Home = () => {
     setFilteredData(response);
   };
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-    handleSearch(''); // Trigger search with empty string to update filter with new date
-  };
+  
 
   return (
     <>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg m-10">
       <div className="flex">
       <SearchBar onSearch={handleSearch} />
-      {/* 
-      <div>
-          <label htmlFor="datePicker" className="block text-sm font-medium text-gray-700">
-            Select Date:
-          </label>
-          <DatePicker
-            id="datePicker"
-            selected={selectedDate}
-            onChange={handleDateChange}
-            dateFormat="dd/MM/yyyy" // Customize date format as needed
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-          />
-        </div>
-        */}
+      
       </div>
         
         

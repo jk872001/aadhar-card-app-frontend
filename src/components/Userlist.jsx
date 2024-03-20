@@ -12,7 +12,7 @@ const Userlist = () => {
 
     const fetchAllUsers=async()=>{
         try {
-            const {data} =await axios.get("http://localhost:4003/api/v1/users/getAllUsers")
+            const {data} =await axios.get("https://aadhar-card-app-backend.onrender.com/api/v1/users/getAllUsers")
             console.log(data)
             setUserList(data?.data?.users)
         } catch (error) {

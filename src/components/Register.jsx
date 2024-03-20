@@ -44,7 +44,7 @@ const Register = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:4003/api/v1/users/registerUser",
+        "https://aadhar-card-app-backend.onrender.com/api/v1/users/registerUser",
         userDetails
       );
       if (response) {

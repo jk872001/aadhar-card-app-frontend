@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { htmlErrorMsg, validateAadharForm } from "../utils/validate";
 import { ToastContainer, toast } from "react-toastify";
 import { toastConfig } from "../utils/toast";
+import axiosInstance from "../utils/axios";
 useNavigate
 const FileUploadForm = () => {
   const [employeeName, setEmployeeName] = useState(getLocalStorage("name"));
@@ -29,8 +30,8 @@ const FileUploadForm = () => {
       formData.append("aadharCard", aadharFile);
       formData.append("uploadedBy", uploadedBy);
 
-      let {data} = await axios.post(
-        "https://aadhar-card-app-backend.onrender.com/api/v1/aadhar/uploadAadharCard",
+      let {data} = await axiosInstance.post(
+        "aadhar/uploadAadharCard",
         formData,
         {
           headers: {
@@ -51,7 +52,7 @@ const FileUploadForm = () => {
   return (
     <>
     <ToastContainer/>
-      <form onSubmit={handleSubmit} className="max-w-sm mx-auto m-10">
+      <form onSubmit={handleSubmit} className="max-w-sm mx-auto m-5">
         <div className="mb-5">
           <label
             htmlFor="employeeName"

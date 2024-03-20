@@ -6,11 +6,11 @@ import { useState } from "react";
 const Header = () => {
 const navigate=useNavigate()
 const [isMenuOpen, setIsMenuOpen] = useState(false);
+let role = getLocalStorage("role");
 
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-let role = getLocalStorage("role");
 
     const handleLogout=()=>{
         localStorage.clear()
@@ -47,14 +47,14 @@ let role = getLocalStorage("role");
       </div>
       {/* Sidebar */}
       {isMenuOpen && (
-        <div className="md:hidden absolute inset-y-0 left-0 z-10 bg-white w-64 h-full shadow-md">
+        <div className="md:hidden absolute inset-y-0 left-0 z-10 bg-white w-64 h-100 shadow-md">
           {/* Sidebar content */}
-          <div className="p-4">
-            <Link to="/home" className="block text-gray-800 py-2">Home</Link>
-            <Link to="/register" className="block text-gray-800 py-2">Create User</Link>
-            <Link to="/userlist" className="block text-gray-800 py-2">User List</Link>
-            <Link to="/uploadFile" className="block text-gray-800 py-2">Upload Aadhar</Link>
-            <button onClick={handleLogout} type="button" className="block text-gray-800 py-2">Logout</button>
+          <div className="p-4 ">
+            <Link onClick={handleMenuToggle} to="/home" className="block text-gray-800 py-2 text-bold ">Home</Link>
+            <Link onClick={handleMenuToggle}  to="/register" className="block text-gray-800 py-2 text-bold ">Create User</Link>
+            <Link onClick={handleMenuToggle}  to="/userlist" className="block text-gray-800 py-2 text-bold ">User List</Link>
+            <Link onClick={handleMenuToggle}  to="/uploadFile" className="block text-gray-800 py-2 text-bold ">Upload Aadhar</Link>
+            <button onClick={handleLogout} type="button" className="block text-gray-800 py-2 text-bold ">Logout</button>
           </div>
         </div>
       )}

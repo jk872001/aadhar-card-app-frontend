@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { htmlErrorMsg, validateLoginForm } from "../utils/validate";
 import { ToastContainer, toast } from "react-toastify";
 import { toastConfig } from "../utils/toast";
+import axiosInstance from "../utils/axios";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -24,8 +25,8 @@ const navigate=useNavigate()
         email,
         password,
       };
-      const {data} = await  axios.post(
-        "https://aadhar-card-app-backend.onrender.com/api/v1/users/loginUser",
+      const {data} = await  axiosInstance.post(
+        "users/loginUser",
         loginUserDetails
       );
       let response=data.data;
@@ -49,7 +50,7 @@ const navigate=useNavigate()
     <>
     <ToastContainer/>
     
-    <form onSubmit={handleLogin} className="max-w-sm mx-auto mt-5 p-10 border-2 border-blue-900 rounded-lg">
+    <form onSubmit={handleLogin} className="max-w-sm mx-auto mt-5 p-10 border-2 border-black rounded-lg">
     <p className="text-center text-2xl text-bold mb-3 ">Login</p>
       <div className="mb-5">
         <label

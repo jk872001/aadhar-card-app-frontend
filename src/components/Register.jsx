@@ -5,6 +5,7 @@ import { htmlErrorMsg, validateRegisterForm } from "../utils/validate";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { toastConfig } from "../utils/toast";
+import axiosInstance from "../utils/axios";
 
 const Register = () => {
   const name = useRef(null);
@@ -36,15 +37,18 @@ const Register = () => {
       let validationError = validateRegisterForm(
         mobileNumberVal,
         passwordVal,
-        emailVal
+        emailVal,
+        nameVal,
+        shopNameVal,
+        shopAddressVal
       );
       if (validationError !== true) {
         toast.error(validationError, toastConfig);
         return;
       }
 
-      const response = await axios.post(
-        "https://aadhar-card-app-backend.onrender.com/api/v1/users/registerUser",
+      const response = await axiosInstance.post(
+        "users/registerUser",
         userDetails
       );
       if (response) {
@@ -60,7 +64,7 @@ const Register = () => {
   return (
     <>
       <ToastContainer />
-      <form onSubmit={handleSubmit} className="max-w-sm mx-auto m-10">
+      <form onSubmit={handleSubmit} className="max-w-sm mx-auto m-5">
         <div className="mb-5">
           <label
             htmlFor="email"

@@ -1,8 +1,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react"
+import axiosInstance from "../utils/axios";
 
 const Userlist = () => {
     const [userList,setUserList]= useState([])
+    const [loading,setLoading]= useState(true)
 
 
 
@@ -12,20 +14,28 @@ const Userlist = () => {
 
     const fetchAllUsers=async()=>{
         try {
-            const {data} =await axios.get("https://aadhar-card-app-backend.onrender.com/api/v1/users/getAllUsers")
-            console.log(data)
+            const {data} =await axiosInstance.get("users/getAllUsers")
             setUserList(data?.data?.users)
+            setLoading(false)
         } catch (error) {
             console.log("Error",error)
         }
             
     }
 
+    if (loading) {
+        return (
+          <div className="flex justify-center items-center h-screen">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-gray-900"></div>
+          </div>
+        );
+      }
+
   return (
     <>
     
 
-<div className="relative overflow-x-auto shadow-md sm:rounded-lg m-10">
+<div className="relative overflow-x-auto shadow-md sm:rounded-lg m-1 ">
 <table className="w-full text-sm text-left rtl:text-right text-gray-500 :text-gray-400">
     <thead className="text-xs text-gray-700 uppercase bg-gray-50 :bg-gray-700 :text-gray-400">
         <tr>
@@ -74,9 +84,11 @@ const Userlist = () => {
             <td className="px-6 py-4">
             {ele.password}
             </td>
+            {/*
             <td className="px-6 py-4 text-right">
                 <a href="#" className="font-medium text-blue-600 :text-blue-500 hover:underline">Edit</a>
             </td>
+            */}
         </tr>
         })
     }

@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import SearchBar from "./SearchBar";
 import { formatDate } from "../utils/date";
+import axiosInstance from "../utils/axios";
 
 const Home = () => {
   const [aadharCardList, setAadharCardList] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
+  const[loading,setLoading]=useState(true)
   const userId = getLocalStorage("_id");
   useEffect(() => {
     fetchAadharCardList();
@@ -18,43 +20,46 @@ const Home = () => {
     // Filter the data based on the search term and selected date
     const filteredList = aadharCardList.filter((ele) => {
       const lowerCaseSearchTerm = searchTerm.toLowerCase();
-      // Convert selectedDate and updatedAt to "dd-mm-yyyy" format
-      const formattedSelectedDate = selectedDate ? formatDate(selectedDate) : null;
-      // console.log("formattedSelectedDate",formattedSelectedDate)
-      const formattedUpdatedAt = formatDate(new Date(ele.updatedAt));
-      // console.log(formattedUpdatedAt)
-      // Filter by Aadhar card holder name, Aadhar card number, and date
+      
       return (
         ele.aadharCardHolderName.toLowerCase().includes(lowerCaseSearchTerm) ||
-        ele.aadharCardNumber.toLowerCase().includes(lowerCaseSearchTerm) ||
-        formattedUpdatedAt.includes(formattedSelectedDate)
+        ele.aadharCardNumber.toLowerCase().includes(lowerCaseSearchTerm) 
+       
       );
     });
     setFilteredData(filteredList);
   };
 
   const fetchAadharCardList = async () => {
-    let { data } = await axios.get(
-      `https://aadhar-card-app-backend.onrender.com/api/v1/aadhar/getAllAadharCard/${userId}`
+    let { data } = await axiosInstance.get(
+      `aadhar/getAllAadharCard/${userId}`
     );
     let response = data?.data?.aadharCards;
 
     setAadharCardList(response);
+    setLoading(false)
     setFilteredData(response);
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-gray-900"></div>
+      </div>
+    );
+  }
   
 
   return (
     <>
-      <div className="relative overflow-x-auto shadow-md sm:rounded-lg m-10">
+      <div className="relative overflow-x-auto shadow-md sm:rounded-lg m-1 ">
       <div className="flex">
       <SearchBar onSearch={handleSearch} />
       
       </div>
         
-        
-        <table className="w-full text-sm text-left rtl:text-right text-gray-500 :text-gray-400">
+      
+      <table className="w-full text-sm text-left rtl:text-right text-gray-500 :text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 :bg-gray-700 :text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">
@@ -69,11 +74,14 @@ const Home = () => {
               <th scope="col" className="px-6 py-3">
                 Employee Name
               </th>
+              {/* 
               <th scope="col" className="px-6 py-3">
                 <span className="sr-only">Edit</span>
               </th>
+              */}
             </tr>
           </thead>
+          
           <tbody>
             {filteredData?.map((ele) => {
               return (
@@ -95,6 +103,8 @@ const Home = () => {
             })}
           </tbody>
         </table>
+      
+        
       </div>
     </>
   );

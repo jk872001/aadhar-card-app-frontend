@@ -10,7 +10,9 @@ const Home = () => {
   const [aadharCardList, setAadharCardList] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
-  const[loading,setLoading]=useState(true)
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+
   const userId = getLocalStorage("_id");
   useEffect(() => {
     fetchAadharCardList();
@@ -20,26 +22,39 @@ const Home = () => {
     // Filter the data based on the search term and selected date
     const filteredList = aadharCardList.filter((ele) => {
       const lowerCaseSearchTerm = searchTerm.toLowerCase();
-      
+
       return (
         ele.aadharCardHolderName.toLowerCase().includes(lowerCaseSearchTerm) ||
-        ele.aadharCardNumber.toLowerCase().includes(lowerCaseSearchTerm) 
-       
+        ele.aadharCardNumber.toLowerCase().includes(lowerCaseSearchTerm) ||
+        ele.createdAt.includes(selectedDate)
       );
     });
     setFilteredData(filteredList);
   };
 
   const fetchAadharCardList = async () => {
-    let { data } = await axiosInstance.get(
-      `aadhar/getAllAadharCard/${userId}`
-    );
+    let { data } = await axiosInstance.get(`aadhar/getAllAadharCard/${userId}`);
     let response = data?.data?.aadharCards;
-
     setAadharCardList(response);
-    setLoading(false)
+    setLoading(false);
     setFilteredData(response);
   };
+
+  const handleDateFilter =  (e) => {
+      const newSelectedDate = e.target.value;
+      setSelectedDate(newSelectedDate)
+      const filteredList = aadharCardList.filter((ele) => {
+        return ele.createdAt.includes(newSelectedDate);
+      });
+      setFilteredData(filteredList);
+   
+  };
+
+  const handleClearSearch=()=>{
+         setSelectedDate("dd-mm-yyyy")
+         setSearchTerm("")
+         setFilteredData(aadharCardList)
+  }
 
   if (loading) {
     return (
@@ -48,18 +63,28 @@ const Home = () => {
       </div>
     );
   }
-  
 
   return (
     <>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg m-1 ">
-      <div className="flex">
-      <SearchBar onSearch={handleSearch} />
-      
-      </div>
-        
-      
-      <table className="w-full text-sm text-left rtl:text-right text-gray-500 :text-gray-400">
+        <div className="flex">
+          <SearchBar onSearch={handleSearch} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <div className="relative m-3">
+          <input
+          className="pl-3 pr-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-200 cursor-pointer"
+            type="date"
+            value={selectedDate}
+            onChange={handleDateFilter}
+          />
+          </div>
+          <div className="relative m-3">
+          <button onClick={handleClearSearch} type="button" className="pl-3 pr-4 py-3 rounded-md border border-gray-300 focus:outline-none transition duration-200 cursor-pointer text-white bg-blue-700  hover:bg-blue-800 ">Clear Filter</button>
+          </div>
+         
+          
+        </div>
+
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500 :text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 :bg-gray-700 :text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">
@@ -81,7 +106,7 @@ const Home = () => {
               */}
             </tr>
           </thead>
-          
+
           <tbody>
             {filteredData?.map((ele) => {
               return (
@@ -103,8 +128,6 @@ const Home = () => {
             })}
           </tbody>
         </table>
-      
-        
       </div>
     </>
   );

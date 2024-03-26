@@ -32,6 +32,13 @@ function App() {
       </AdminRoute>
     },
     {
+      path:"/register/:userId",
+      element:<AdminRoute>
+      <Header/>
+      <Register/>
+      </AdminRoute>
+    },
+    {
       path:"/userlist",
       element: <AdminRoute>
       <Header/>

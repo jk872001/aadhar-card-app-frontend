@@ -1,8 +1,8 @@
-import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { htmlErrorMsg, validateLoginForm } from "../utils/validate";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { toastConfig } from "../utils/toast";
 import axiosInstance from "../utils/axios";
 

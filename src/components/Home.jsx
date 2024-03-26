@@ -1,17 +1,17 @@
-import { useNavigate } from "react-router-dom";
 import { getLocalStorage } from "../utils/localStorage";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import SearchBar from "./SearchBar";
-import { formatDate } from "../utils/date";
 import axiosInstance from "../utils/axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { toastConfig } from "../utils/toast";
 
 const Home = () => {
   const [aadharCardList, setAadharCardList] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   const userId = getLocalStorage("_id");
   useEffect(() => {
@@ -40,22 +40,37 @@ const Home = () => {
     setFilteredData(response);
   };
 
-  const handleDateFilter =  (e) => {
-      const newSelectedDate = e.target.value;
-      setSelectedDate(newSelectedDate)
-      const filteredList = aadharCardList.filter((ele) => {
-        return ele.createdAt.includes(newSelectedDate);
-      });
-      setFilteredData(filteredList);
-   
+  const handleDateFilter = (e) => {
+    const newSelectedDate = e.target.value;
+    setSelectedDate(newSelectedDate);
+    const filteredList = aadharCardList.filter((ele) => {
+      return ele.createdAt.includes(newSelectedDate);
+    });
+    setFilteredData(filteredList);
   };
 
-  const handleClearSearch=()=>{
-         setSelectedDate("dd-mm-yyyy")
-         setSearchTerm("")
-         setFilteredData(aadharCardList)
-  }
+  const handleClearSearch = () => {
+    setSelectedDate("dd-mm-yyyy");
+    setSearchTerm("");
+    setFilteredData(aadharCardList);
+  };
 
+  const handleDelete = async (aadharId) => {
+    try {
+      const { data } = await axiosInstance.post("aadhar/deleteAadhar", {
+        aadharId,
+      });
+      console.log(data);
+      if (data.statusCode == 200) {
+        toast.success(data.message, toastConfig);
+        fetchAadharCardList();
+      } else {
+        toast.error("Something went wrong...", toastConfig);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -66,23 +81,38 @@ const Home = () => {
 
   return (
     <>
+      <ToastContainer />
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg m-1 ">
-        <div className="flex">
-          <SearchBar onSearch={handleSearch} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-          <div className="relative m-3">
-          <input
-          className="pl-3 pr-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-200 cursor-pointer"
-            type="date"
-            value={selectedDate}
-            onChange={handleDateFilter}
-          />
-          </div>
-          <div className="relative m-3">
-          <button onClick={handleClearSearch} type="button" className="pl-3 pr-4 py-3 rounded-md border border-gray-300 focus:outline-none transition duration-200 cursor-pointer text-white bg-blue-700  hover:bg-blue-800 ">Clear Filter</button>
-          </div>
-         
-          
-        </div>
+      <div className="flex flex-col md:flex-row items-center justify-center md:justify-start">
+      {/* SearchBar component */}
+      <SearchBar
+        onSearch={handleSearch}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+      />
+    
+      {/* Date Input Field */}
+      <div className="relative m-3">
+        <input
+          className="pl-3 pr-4 py-2 md:py-3 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-200 cursor-pointer text-sm md:text-base"
+          type="date"
+          value={selectedDate}
+          onChange={handleDateFilter}
+        />
+      </div>
+    
+      {/* Clear Filter Button */}
+      <div className="relative m-3">
+        <button
+          onClick={handleClearSearch}
+          type="button"
+          className="pl-3 pr-4 py-2 md:py-3 rounded-md border border-gray-300 focus:outline-none transition duration-200 cursor-pointer text-white bg-blue-700 hover:bg-blue-800 text-sm md:text-base"
+        >
+          Clear Filter
+        </button>
+      </div>
+    </div>
+    
 
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 :text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 :bg-gray-700 :text-gray-400">
@@ -98,6 +128,9 @@ const Home = () => {
               </th>
               <th scope="col" className="px-6 py-3">
                 Employee Name
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Action
               </th>
               {/* 
               <th scope="col" className="px-6 py-3">
@@ -123,6 +156,11 @@ const Home = () => {
                     <img src={ele.aadharCard} width={100} height={100} />
                   </td>
                   <td className="px-6 py-4">{ele.employeeName}</td>
+                  <button
+                    onClick={() => handleDelete(ele._id)}
+                    className="px-6 py-4 text-red-600">
+                    Delete
+                  </button>
                 </tr>
               );
             })}

@@ -1,6 +1,5 @@
-import axios from "axios";
-import { useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { htmlErrorMsg, validateRegisterForm } from "../utils/validate";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,14 +7,39 @@ import { toastConfig } from "../utils/toast";
 import axiosInstance from "../utils/axios";
 
 const Register = () => {
-  const name = useRef(null);
+  let name = useRef(null);
   const shopName = useRef(null);
-  const shopAddress = useRef(null);
-  const email = useRef(null);
-  const password = useRef(null);
-  const mobileNumber = useRef(null);
+  let shopAddress = useRef(null);
+  let email = useRef(null);
+  let password = useRef(null);
+  let mobileNumber = useRef(null);
+  let {userId}=useParams()
 
+  useEffect(()=>{
+    if(userId){
+      getUserById(userId)
+    }
+  },[userId])
+
+  const getUserById=async()=>{
+     try {
+       const {data}=await axiosInstance.get(`users/getUserById/${userId}`)
+       let response=data?.data;
+       name.current.value=response.name
+       shopName.current.value=response.shopName
+       shopAddress.current.value=response.shopAddress
+       email.current.value=response.email
+       password.current.value=response.password
+       mobileNumber.current.value=response.mobileNumber
+
+     } catch (error) {
+      console.log(error)
+     }
+  }
+
+  
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
@@ -47,14 +71,28 @@ const Register = () => {
         return;
       }
 
-      const response = await axiosInstance.post(
-        "users/registerUser",
-        userDetails
-      );
-      if (response) {
-        toast.success(response.message, toastConfig);
-        navigate("/userlist");
+      if(userId){
+        const response = await axiosInstance.put(
+          `users/userUpdate/${userId}`,
+          userDetails
+        );
+        if (response) {
+          toast.success(response.message, toastConfig);
+          navigate("/userlist");
+        }else{
+          toast.error("Something went wrong", toastConfig);
+        }
+      }else{
+        const response = await axiosInstance.post(
+          "users/registerUser",
+          userDetails
+        );
+        if (response) {
+          toast.success(response.message, toastConfig);
+          navigate("/userlist");
+        }
       }
+      
     } catch (error) {
       const errorHtml = htmlErrorMsg(error.response.data);
       toast.error(errorHtml, toastConfig);
@@ -143,7 +181,8 @@ const Register = () => {
         <button
           type="submit"
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center :bg-blue-600 :hover:bg-blue-700 :focus:ring-blue-800">
-          Register new account
+          {userId ? "Update User" : "Register new account"}
+          
         </button>
       </form>
     </>

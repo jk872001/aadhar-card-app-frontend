@@ -2,10 +2,10 @@ import axios from "axios";
 
 const axiosInstance = axios.create({
     // production
-    // baseURL: "https://aadhar-card-app-backend.onrender.com/api/v1",
+    baseURL: "https://aadhar-card-app-backend.onrender.com/api/v1",
   
     // local
-      baseURL: "http://localhost:4003/api/v1",
+      // baseURL: "http://localhost:4003/api/v1",
   });
 
   

@@ -5,6 +5,7 @@ import axiosInstance from "../utils/axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { toastConfig } from "../utils/toast";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const [aadharCardList, setAadharCardList] = useState([]);
@@ -74,6 +75,10 @@ const Home = () => {
       console.log(error);
     }
   };
+
+  // const handleAadharImage=async(e)=>{
+          
+  // }
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -155,9 +160,11 @@ const Home = () => {
                     {ele.aadharCardHolderName}
                   </th>
                   <td className="px-6 py-4">{ele.aadharCardNumber}</td>
+                  <Link to={ele.aadharCard} target="_blank">
                   <td className="px-6 py-4">
-                    <img src={ele.aadharCard} width={100} height={100} />
+                    <img  src={ele.aadharCard} width={100} height={100} />
                   </td>
+                  </Link>
                   <td className="px-6 py-4">{ele.employeeName}</td>
                   <button
                     onClick={() => handleDelete(ele._id)}

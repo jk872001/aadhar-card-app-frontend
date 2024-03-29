@@ -57,16 +57,19 @@ const Home = () => {
 
   const handleDelete = async (aadharId) => {
     try {
-      const { data } = await axiosInstance.post("aadhar/deleteAadhar", {
-        aadharId,
-      });
-      console.log(data);
-      if (data.statusCode == 200) {
-        toast.success(data.message, toastConfig);
-        fetchAadharCardList();
-      } else {
-        toast.error("Something went wrong...", toastConfig);
+      const isConfirmed = window.confirm('Are you sure you want to delete?');
+      if(isConfirmed){
+        const { data } = await axiosInstance.post("aadhar/deleteAadhar", {
+          aadharId,
+        });
+        if (data.statusCode == 200) {
+          toast.success(data.message, toastConfig);
+          fetchAadharCardList();
+        } else {
+          toast.error("Something went wrong...", toastConfig);
+        }
       }
+      
     } catch (error) {
       console.log(error);
     }

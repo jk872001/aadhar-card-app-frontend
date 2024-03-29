@@ -25,13 +25,16 @@ const Userlist = () => {
 
   const handleDelete = async (userId) => {
     try {
-      const { data } = await axiosInstance.post("users/deleteUser", { userId });
-      if (data.statusCode == 200) {
-        toast.success(data.message, toastConfig);
-        fetchAllUsers();
-      } else {
-        toast.error("Something went wrong...", toastConfig);
-      }
+      const isConfirmed = window.confirm('Are you sure you want to delete?');
+      if(isConfirmed){
+        const { data } = await axiosInstance.post("users/deleteUser", { userId });
+        if (data.statusCode == 200) {
+          toast.success(data.message, toastConfig);
+          fetchAllUsers();
+        } else {
+          toast.error("Something went wrong...", toastConfig);
+        }
+      }  
     } catch (error) {
       console.log(error);
     }
@@ -98,7 +101,7 @@ const Userlist = () => {
                   <td className="px-6 py-4">{ele.shopAddress}</td>
                   <td className="px-6 py-4">{ele.mobileNumber}</td>
                   <td className="px-6 py-4">{ele.email}</td>
-                  <td className="px-6 py-4">{ele.password}</td>
+                  <td className="px-6 py-4">{ele.role === "admin" ? "******" : ele.password }</td>
 
                   <td className="px-6 py-4 text-right flex gap-5">
                     <button
@@ -107,6 +110,7 @@ const Userlist = () => {
                       Edit
                     </button>
                     <button
+                    disabled={ele.role === "admin" ? true : false}
                       onClick={() => handleDelete(ele._id)}
                       className="font-medium text-red-600 :text-blue-500 ">
                       Delete

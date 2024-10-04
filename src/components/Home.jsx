@@ -6,7 +6,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { toastConfig } from "../utils/toast";
 import { Link } from "react-router-dom";
-
+import { useReactToPrint } from "react-to-print";
+import PrintButton from "./PrintButton";
+import { handlePrint } from "../utils/print";
 const Home = () => {
   const [aadharCardList, setAadharCardList] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -58,8 +60,8 @@ const Home = () => {
 
   const handleDelete = async (aadharId) => {
     try {
-      const isConfirmed = window.confirm('Are you sure you want to delete?');
-      if(isConfirmed){
+      const isConfirmed = window.confirm("Are you sure you want to delete?");
+      if (isConfirmed) {
         const { data } = await axiosInstance.post("aadhar/deleteAadhar", {
           aadharId,
         });
@@ -70,15 +72,11 @@ const Home = () => {
           toast.error("Something went wrong...", toastConfig);
         }
       }
-      
     } catch (error) {
       console.log(error);
     }
   };
 
-  // const handleAadharImage=async(e)=>{
-          
-  // }
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -91,36 +89,34 @@ const Home = () => {
     <>
       <ToastContainer />
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg m-1 ">
-      <div className="flex flex-col md:flex-row items-center justify-center md:justify-start">
-      {/* SearchBar component */}
-      <SearchBar
-        onSearch={handleSearch}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-      />
-    
-      {/* Date Input Field */}
-      <div className="relative m-3">
-        <input
-          className="pl-3 pr-4 py-2 md:py-3 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-200 cursor-pointer text-sm md:text-base"
-          type="date"
-          value={selectedDate}
-          onChange={handleDateFilter}
-        />
-      </div>
-    
-      {/* Clear Filter Button */}
-      <div className="relative m-3">
-        <button
-          onClick={handleClearSearch}
-          type="button"
-          className="pl-3 pr-4 py-2 md:py-3 rounded-md border border-gray-300 focus:outline-none transition duration-200 cursor-pointer text-white bg-blue-700 hover:bg-blue-800 text-sm md:text-base"
-        >
-          Clear Filter
-        </button>
-      </div>
-    </div>
-    
+        <div className="flex flex-col md:flex-row items-center justify-center md:justify-start">
+          {/* SearchBar component */}
+          <SearchBar
+            onSearch={handleSearch}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
+
+          {/* Date Input Field */}
+          <div className="relative m-3">
+            <input
+              className="pl-3 pr-4 py-2 md:py-3 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-200 cursor-pointer text-sm md:text-base"
+              type="date"
+              value={selectedDate}
+              onChange={handleDateFilter}
+            />
+          </div>
+
+          {/* Clear Filter Button */}
+          <div className="relative m-3">
+            <button
+              onClick={handleClearSearch}
+              type="button"
+              className="pl-3 pr-4 py-2 md:py-3 rounded-md border border-gray-300 focus:outline-none transition duration-200 cursor-pointer text-white bg-blue-700 hover:bg-blue-800 text-sm md:text-base">
+              Clear Filter
+            </button>
+          </div>
+        </div>
 
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 :text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 :bg-gray-700 :text-gray-400">
@@ -160,11 +156,16 @@ const Home = () => {
                     {ele.aadharCardHolderName}
                   </th>
                   <td className="px-6 py-4">{ele.aadharCardNumber}</td>
-                  <Link to={ele.aadharCard} target="_blank">
-                  <td className="px-6 py-4">
-                    <img  src={ele.aadharCard} width={100} height={100} />
-                  </td>
-                  </Link>
+                  <div>
+                    <td className="px-6 py-4 flex space-x-7">
+                      <Link to={ele.aadharCard} target="blank" className="font-bold cursor-pointer">View</Link>
+                      <button
+                        onClick={() => handlePrint(ele.aadharCard)}
+                        className="font-bold">
+                        Print
+                      </button>
+                    </td>
+                  </div>
                   <td className="px-6 py-4">{ele.employeeName}</td>
                   <button
                     onClick={() => handleDelete(ele._id)}
